@@ -1,0 +1,32 @@
+package modelo;
+
+import connex.Conexion;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class empleadoDAO {
+
+    public static boolean login(String user, String password) throws SQLException {
+        Connection cx = Conexion.conectar("root", "");
+
+        String query = "SELECT contraseña, nombre FROM empleados WHERE  nombre = ?";
+
+        PreparedStatement stm = cx.prepareStatement(query);
+        stm.setString(1, user);
+
+        ResultSet rs = stm.executeQuery();
+        if (rs.next()) {
+            // Obtén la contraseña almacenada en la base de datos
+            String storedPassword = rs.getString("contraseña");
+
+            // Compara la contraseña ingresada con la almacenada
+            return password.equals(storedPassword);
+        } else {
+            // Usuario no encontrado
+            return false;
+        }
+    }
+}
